@@ -13,11 +13,6 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var sceneView: SCNView!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         setup()
@@ -27,19 +22,18 @@ class ViewController: UIViewController {
         let scene = setupScene()
         let color = setColor()
         let color2 = setColor2()
-        let target1 = setupCone(scene: scene, color: color)
-        let target2 = setupCube(scene: scene, color: color, color2: color2)
-        let constraint = constraints(target: target1)
+        let cone = setupCone(scene: scene, color: color)
+        let cube = setupCube(scene: scene, color: color, color2: color2)
+        let constraint = constraints(target: cone)
         setupCamera(constraint: constraint)
-        animationPosition(target1)
-        animationPosition2(target2)
+        animationPositionCone(cone)
+        animationPositionCube(cube)
     }
     
     func setupCamera(constraint: SCNConstraint) {
         let cameraNode = SCNNode()
         let camera = SCNCamera()
         cameraNode.camera = camera
-        cameraNode.position = SCNVector3(x: -5.0, y: 3.0, z: 9.0)
         cameraNode.constraints = [constraint]
     }
     
@@ -60,6 +54,15 @@ class ViewController: UIViewController {
         return coneNode
     }
     
+    func animationPositionCone(_ node: SCNNode) {
+        let animation = CABasicAnimation(keyPath: "position.y")
+        animation.fromValue = 0.6
+        animation.toValue = 1.9
+        animation.duration = 5.0
+        animation.autoreverses = true
+        animation.repeatCount = .infinity
+        node.addAnimation(animation, forKey: "y")
+    }
     
     func setupCube(scene: SCNScene, color: SCNMaterial, color2: SCNMaterial) -> SCNNode {
         let cube: SCNGeometry = SCNBox(width: 0.8, height: 0.8, length: 0.8, chamferRadius: 0)
@@ -70,17 +73,7 @@ class ViewController: UIViewController {
         return cubeNode
     }
     
-    func animationPosition(_ node: SCNNode) {
-        let animation = CABasicAnimation(keyPath: "position.y")
-        animation.fromValue = 0.6
-        animation.toValue = 1.9
-        animation.duration = 5.0
-        animation.autoreverses = true
-        animation.repeatCount = .infinity
-        node.addAnimation(animation, forKey: "y")
-    }
-    
-    func animationPosition2(_ node: SCNNode) {
+    func animationPositionCube(_ node: SCNNode) {
         let animation = CABasicAnimation(keyPath: "position.y")
         animation.fromValue = -0.6
         animation.toValue = -1.7
@@ -89,7 +82,6 @@ class ViewController: UIViewController {
         animation.repeatCount = .infinity
         node.addAnimation(animation, forKey: "y")
     }
-    
     
     func setColor() -> SCNMaterial {
         let sandMaterial = SCNMaterial()
